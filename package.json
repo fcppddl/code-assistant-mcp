@@ -1,0 +1,41 @@
+{
+  "name": "code-assistant-mcp",
+  "version": "1.0.1",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "code-assistant-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "start": "tsx --watch src/cli.ts",
+    "start:cli": "tsx --watch src/cli.ts --stdio",
+    "start:http": "tsx --watch src/cli.ts",
+    "build": "tsup --dts",
+    "pub:release": "npm run build && npm publish"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "mcp",
+    "typescript"
+  ],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.10.2",
+    "axios": "^1.9.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "zod": "^3.24.3"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.15.2",
+    "tsup": "^8.4.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3"
+  }
+}
