@@ -4,7 +4,7 @@
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "code-assistant-mcp": "dist/index.js"
+    "code-assistant-mcp": "dist/cli.js"
   },
   "scripts": {
     "start": "tsx --watch src/cli.ts",
