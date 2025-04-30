@@ -236,22 +236,6 @@ export class CodeAssistantMcpServer {
   private async connect(transport: Transport): Promise<void> {
     await this.server.connect(transport);
 
-    Logger.log = (...args: any[]) => {
-      this.server.server.sendLoggingMessage({
-        level: "info",
-        data: args,
-      });
-      console.log(...args);
-    };
-
-    Logger.error = (...args: any[]) => {
-      this.server.server.sendLoggingMessage({
-        level: "error",
-        data: args,
-      });
-      console.error(...args);
-    };
-
     // Ensure stdout is only used for JSON messages
     const originalStdoutWrite = process.stdout.write.bind(process.stdout);
     process.stdout.write = (chunk: any, encoding?: any, callback?: any) => {
