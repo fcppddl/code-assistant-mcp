@@ -20,12 +20,10 @@ export async function startServer(): Promise<void> {
   const server = new CodeAssistantMcpServer();
 
   try {
-    // 启动HTTP服务器
     if (isStdioMode) {
-      console.log("Initializing  MCP Server in STDIO mode...");
       server.startStdio();
     } else {
-      console.log(`Initializing  MCP Server in HTTP mode on port ${port}...`);
+      // 启动HTTP服务器
       await server.startHttp(port);
     }
   } catch (error) {

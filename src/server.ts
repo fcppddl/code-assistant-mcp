@@ -252,6 +252,16 @@ export class CodeAssistantMcpServer {
       console.error(...args);
     };
 
-    Logger.log("服务器已连接，可以处理请求");
+    // Ensure stdout is only used for JSON messages
+    const originalStdoutWrite = process.stdout.write.bind(process.stdout);
+    process.stdout.write = (chunk: any, encoding?: any, callback?: any) => {
+      // Only allow JSON messages to pass through
+      if (typeof chunk === "string" && !chunk.startsWith("{")) {
+        return true; // Silently skip non-JSON messages
+      }
+      return originalStdoutWrite(chunk, encoding, callback);
+    };
+
+    Logger.log("Server connected and ready to process requests");
   }
 }
