@@ -8,6 +8,7 @@ import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import { randomUUID } from "node:crypto";
+import { Server } from "http";
 // 导入自定义模块
 import request from "./request.js";
 
@@ -27,7 +28,7 @@ export const Logger = {
  */
 export class CodeAssistantMcpServer {
   private server: McpServer;
-  private transport: Transport | null = null;
+  private httpServer: Server | null = null;
 
   /**
    * 构造函数
@@ -36,8 +37,8 @@ export class CodeAssistantMcpServer {
     // 创建MCP服务器
     this.server = new McpServer(
       {
-        name: "飞书文档MCP服务",
-        version: "1.0.0",
+        name: "PSS Code Assistant Mcp",
+        version: "1.0.5",
       },
       {
         capabilities: {
@@ -128,7 +129,6 @@ export class CodeAssistantMcpServer {
    */
   async startStdio() {
     const transport = new StdioServerTransport();
-    this.transport = transport;
     await this.connect(transport);
     return this;
   }
@@ -222,7 +222,7 @@ export class CodeAssistantMcpServer {
 
     // 启动HTTP服务器
     return new Promise<this>((resolve) => {
-      app.listen(port, () => {
+      this.httpServer = app.listen(port, () => {
         Logger.log(`HTTP服务器已启动，监听端口: ${port}`);
         Logger.log(`SSE端点: http://localhost:${port}/mcp`);
         resolve(this);
@@ -247,5 +247,30 @@ export class CodeAssistantMcpServer {
     };
 
     Logger.log("Server connected and ready to process requests");
+  }
+
+  /**
+   * 停止HTTP服务器
+   */
+  stopHttpServer(): Promise<void> {
+    if (!this.httpServer) {
+      throw new Error("HTTP server is not running");
+    }
+
+    return new Promise((resolve, reject) => {
+      this.httpServer!.close((err: Error | undefined) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        this.httpServer = null;
+        const closing = Object.values(transports.sse).map((transport) => {
+          return transport.close();
+        });
+        Promise.all(closing).then(() => {
+          resolve();
+        });
+      });
+    });
   }
 }
